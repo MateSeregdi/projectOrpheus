@@ -1,0 +1,6 @@
+bg: 040f16
+second bg: 25252d
+text: fefee3
+primary: 1be7ff
+contrast: ff9f1c
+

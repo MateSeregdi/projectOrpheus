@@ -1,0 +1,4 @@
+**/node_modules
+database/musicbrainz-dump
+database/orpheus_db_dump.sql
+.git
