@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     text: {
         color: '#FEFEE3',
         paddingTop: 0,
-        fontFamily: 'Halyard-Display-Medium',
+        fontFamily: 'Roboto',
         fontSize: 18,
         overflow: 'hidden'
 
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     artist: {
         color: '#FEFEE3',
         fontSize: 12,
-        fontFamily: 'Halyard-Display-Normal',
+        fontFamily: 'Roboto',
         fontStyle: 'normal',
         opacity: 0.8
 
@@ -59,7 +59,8 @@ const styles = StyleSheet.create({
         color: '#1be7ff',
         textAlign: 'center',
         textAlignVertical: 'center',
-        fontSize: 30
+        fontSize: 30,
+        fontFamily: "Roboto"
     }
 })
 

@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         textAlignVertical: 'center',
         height: 'fit-content',
         width: '100%',
-        fontFamily: 'Halyard-Display-Black',
+        fontFamily: 'Roboto',
 
 
     }

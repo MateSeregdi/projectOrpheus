@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#1be7ff",
     overflow: "hidden",
-    fontFamily: "Halyard-Display-Normal",
+    fontFamily: "Roboto"
   },
   image: {
     width: 150,

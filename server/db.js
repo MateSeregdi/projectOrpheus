@@ -6,7 +6,7 @@ const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'orpheus_db',
-    password: '10BJsA3pk',
+    password: 'orpheus',
     port: 5432,
 })
 

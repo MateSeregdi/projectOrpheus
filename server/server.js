@@ -4,11 +4,6 @@ const db = require("./db");
 
 app.use(cors());
 
-app.get("/api", (req, res) => {
-  console.log("success");
-  res.status(200).json({ users: ["userOne", "userTwo", "userThree"] });
-});
-
 app.get("/api/release_group/details/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -153,7 +148,6 @@ app.get("/api/release_group/details/:id", async (req, res) => {
             text: "INSERT INTO musicbrainz.artist_cover_art (id, cover_art) VALUES ($1, $2)",
             values: [artist_id, coverArtUrl],
           };
-        console.log(query)
       await db.query(query);
       return coverArtUrl;
     };
@@ -278,7 +272,6 @@ app.get("/api/release_group/details/:id", async (req, res) => {
     const nameSet = new Set();
     const uniqueArtists = await Promise.all(
       artistsOnReleaseGroup.filter((artist) => {
-        console.log(artist);
         if (idSet.has(artist.artist) || nameSet.has(artist.name)) {
           return false;
         } else {
@@ -288,17 +281,14 @@ app.get("/api/release_group/details/:id", async (req, res) => {
         }
       })
     );
-    console.log(uniqueArtists);
     await Promise.all(
       uniqueArtists.map(async (artist) => {
         try {
           if (!artist.cover_art) {
-            console.log(artist)
             const cover_art = await getCoverArt({
               mbid: artist.mbid,
               artist_id: artist.artist,
             });
-            console.log(cover_art);
             artist.cover_art = cover_art;
           }
         } catch (error) {
@@ -321,7 +311,7 @@ app.get("/api/release_group/details/:id", async (req, res) => {
 
 app.get("/api/release_group/query", async (req, res) => {
   const { minListeningCount } = req.query || 0;
-  console.log("processing request");
+
   try {
     const query = `SELECT mrg.name AS release_group_name, mrg.id AS release_group_id, mrg.gid AS mbid,
         mrgca.cover_art
@@ -329,12 +319,11 @@ app.get("/api/release_group/query", async (req, res) => {
         JOIN musicbrainz.release_group_listening_count AS mrglc ON mrg.id = mrglc.id 
         LEFT JOIN musicbrainz.release_group_cover_art AS mrgca ON mrgca.id = mrg.id
         WHERE mrglc.listening_count > ${minListeningCount};`;
-    const release_groups = await db.query(query);
-    res.status(200).send(release_groups.rows);
+    const releaseGroupResult = await db.query(query);
+
+    res.status(200).send(releaseGroupResult.rows);
   } catch (error) {
-    console.error(
-      `Error inserting data for release group: ${error.message}`
-    );
+    console.error(`Error inserting data for release group: ${error.message}`);
   }
 });
 

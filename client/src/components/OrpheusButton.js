@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         fontSize: 40,
         textAlign: 'center',
         width: '100%',
-        fontFamily: 'Halyard-Display-Medium',
+        fontFamily: 'Roboto',
         padding: 9
         
     },

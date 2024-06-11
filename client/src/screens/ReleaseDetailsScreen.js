@@ -8,7 +8,7 @@ import {
   FlatList,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Release from "../components/Release";
 import Titel from "../components/Titel";
 import Score from "../components/Score";
@@ -17,12 +17,21 @@ import Track from "../components/Track";
 import ReleaseSelector from "../components/ReleaseSelector";
 import OrpheusButton from "../components/OrpheusButton";
 import SectionHeader from "../components/SectionHeader";
+import {
+  useFonts,
+  Roboto_400Regular,
+  Roboto_700Bold,
+} from "@expo-google-fonts/roboto";
+import * as SplashScreen from "expo-splash-screen";
+
+SplashScreen.preventAutoHideAsync();
 
 const ReleaseDetailsScreen = ({ route, navigation }) => {
   const { id } = route.params;
   const [release_group, setReleaseGroup] = useState({});
   const [currentRelease, setCurrentRelease] = useState(0);
   const [sections, setSections] = useState([]);
+  const [appIsReady, setAppIsReady] = useState(false);
 
   async function fetchRelease() {
     try {
@@ -70,14 +79,29 @@ const ReleaseDetailsScreen = ({ route, navigation }) => {
     setSections(sections);
     return sections;
   }
-
+  let [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold });
   useEffect(() => {
-    const fetchData = async () => {
-      const releaseData = await fetchRelease();
-      getSections(releaseData);
-    };
-    fetchData();
+    async function prepare() {
+      try {
+        const releaseData = await fetchRelease();
+        getSections(releaseData);
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+      }
+    }
+    prepare();
   }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+  if (!appIsReady) {
+    return null;
+  }
 
   const navigateToRelease = ({ id, name }) => {
     navigation.replace("ReleaseDetails", { id: id, title: name });
@@ -96,111 +120,75 @@ const ReleaseDetailsScreen = ({ route, navigation }) => {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      {release_group.releases ? (
-        <View>
-          <View style={styles.titelContainer}>
-            <Image
-              key={release_group.cover_art}
-              source={{ uri: release_group.cover_art }}
-              style={styles.image}
-            />
-            <Titel text={release_group.releases[0].name} />
-          </View>
-          <View style={styles.score}>
-            <Score score={"100"} scoreText={"Orpheus Score"} />
-            <OrpheusButton text={"Review"} onChange={reviewRelease} />
-          </View>
-          <View style={styles.info}>
-            <Info
-              width={"31%"}
-              height={"100%"}
-              info={"Release Date"}
-              infoText={`${release_group.date.year}. ${release_group.date.month}. ${release_group.date.day}`}
-            />
-            <Info
-              width={"31%"}
-              height={"100%"}
-              infoText={`${release_group.releases[currentRelease].tracks.length}`}
-              info={"Tracks"}
-            />
-            <Info
-              width={"31%"}
-              height={"100%"}
-              infoText={"100"}
-              info={"Orpheus Score"}
-            />
-          </View>
-          <SectionHeader text={"Select Release"} />
-          <ReleaseSelector
-            releases={release_group.releases}
-            changeRelease={changeRelease}
+    <ScrollView style={styles.container} onLayout={onLayoutRootView}>
+      <View>
+        <View style={styles.titelContainer}>
+          <Image
+            key={release_group.cover_art}
+            source={{ uri: release_group.cover_art }}
+            style={styles.image}
           />
-          <SectionHeader text={"Tracks"} />
-          <View style={styles.tracksWrapper}>
-            {release_group.releases[currentRelease].tracks.map((track) => {
-              return <Track key={track.recording_id} track={track} />;
-            })}
-          </View>
-          <View style={styles.score}>
-            <Score score={"100"} scoreText={"Critique Score"} />
-            <Score score={"100"} scoreText={"User Score"} />
-          </View>
-          <SectionHeader text={"You might like"} />
-          <View>
-            <ScrollView style={styles.otherAlbumsByArtist} horizontal>
-              {release_group.otherAlbumsByArtist.map((release) => {
-                return (
-                  <Release
-                    key={release.release_group_id}
-                    release={release}
-                    onClick={() =>
-                      navigateToRelease({
-                        name: release.release_group_name,
-                        id: release.release_group_id,
-                      })
-                    }
-                  />
-                );
-              })}
-            </ScrollView>
-          </View>
-          {/**<View style={styles.release}>
-            
-            <Text>{release_group.artist.name}</Text>
-            <Text>{release_group.area.name}</Text>
-          </View>
-          <SectionList
-            style={styles.tracks}
-            sections={sections}
-            keyExtractor={(item, index) => item + index }
-            renderItem={({item}) => (
-              <View style={styles.container}>
-                <Text style={styles.text}>{item.name}</Text>
-                <Text>{item.artist_credit}</Text>
-              </View>
-            )}
-            renderSectionHeader={({section: {title}}) => (
-              <Text style={styles.header}>{title}</Text>
-            )} /> 
-          <FlatList
-            horizontal
-            style={styles.albumRecommendations}
-            data={release_group.otherAlbumsByArtist}
-            renderItem={({item}) => <View><Release release={item} onClick={navigateToRelease} /></View>}
-            keyExtractor={release => release.release_group_id}
-          />
-          <FlatList
-            horizontal
-            style={styles.artistRecommendations}
-            data={release_group.artistsOnTracks}
-            renderItem={({item}) => <View><Text>{item.name}</Text></View>}
-            keyExtractor={artist => artist.artist}
-            />**/}
+          <Titel text={release_group.releases[0].name} />
         </View>
-      ) : (
-        <Text>Loading...</Text>
-      )}
+        <View style={styles.score}>
+          <Score score={"100"} scoreText={"Orpheus Score"} />
+          <OrpheusButton text={"Review"} onChange={reviewRelease} />
+        </View>
+        <View style={styles.info}>
+          <Info
+            width={"31%"}
+            height={"100%"}
+            info={"Release Date"}
+            infoText={`${release_group.date.year}. ${release_group.date.month}. ${release_group.date.day}`}
+          />
+          <Info
+            width={"31%"}
+            height={"100%"}
+            infoText={`${release_group.releases[currentRelease].tracks.length}`}
+            info={"Tracks"}
+          />
+          <Info
+            width={"31%"}
+            height={"100%"}
+            infoText={"100"}
+            info={"Orpheus Score"}
+          />
+        </View>
+        <SectionHeader text={"Select Release"} />
+        <ReleaseSelector
+          releases={release_group.releases}
+          changeRelease={changeRelease}
+        />
+        <SectionHeader text={"Tracks"} />
+        <View style={styles.tracksWrapper}>
+          {release_group.releases[currentRelease].tracks.map((track) => {
+            return <Track key={track.recording_id} track={track} />;
+          })}
+        </View>
+        <View style={styles.score}>
+          <Score score={"100"} scoreText={"Critique Score"} />
+          <Score score={"100"} scoreText={"User Score"} />
+        </View>
+        <SectionHeader text={"You might like"} />
+        <View>
+          <ScrollView style={styles.otherAlbumsByArtist} horizontal>
+            {release_group.otherAlbumsByArtist.map((release) => {
+              return (
+                <Release
+                  key={release.release_group_id}
+                  release={release}
+                  onClick={() =>
+                    navigateToRelease({
+                      name: release.release_group_name,
+                      id: release.release_group_id,
+                    })
+                  }
+                />
+              );
+            })}
+          </ScrollView>
+        </View>
+      </View>
     </ScrollView>
   );
 };

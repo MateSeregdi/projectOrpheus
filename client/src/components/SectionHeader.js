@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#25252d',
         padding: 5,
         paddingLeft: 10,
-        fontFamily: 'Halyard-Display-Medium',
+        fontFamily: 'Roboto',
         fontSize: 16,
         opacity: 1,
         borderRadius: 10,

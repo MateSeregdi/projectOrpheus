@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         textAlignVertical: 'top',
         width: '100%',
-        fontFamily: 'Halyard-Display-Medium',
+        fontFamily: 'Roboto',
         padding: 10,
         paddingBottom: 0,
         
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         color: '#FEFEE3',
         padding: 10,
         paddingTop: 0,
-        fontFamily: 'Halyard-Display-Medium',
+        fontFamily: 'Roboto',
         fontSize: 16,
         opacity: 1
 
