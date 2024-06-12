@@ -8,6 +8,7 @@ import HomeScreen from './src/screens/HomeScreen'
 import StatisticsScreen from './src/screens/StatisticsScreen'
 import SettingsScreen from './src/screens/SettingsScreen'
 import ReleaseDetailsScreen from './src/screens/ReleaseDetailsScreen'
+import ArtistDetailsScreen from './src/screens/ArtistDetailsScreen';
 
 
 
@@ -37,6 +38,8 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen}/>
         <Stack.Screen name="ReleaseDetails" component={ReleaseDetailsScreen} options={({ route }) => ({ title: route.params.title })}/>
+        <Stack.Screen name="ArtistDetails" component={ArtistDetailsScreen} options={({ route }) => ({ title: route.params.title })}/>
+
       </Stack.Navigator>
     )
   }

@@ -23,6 +23,7 @@ import {
   Roboto_700Bold,
 } from "@expo-google-fonts/roboto";
 import * as SplashScreen from "expo-splash-screen";
+import Artist from "../components/Artist";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -79,7 +80,6 @@ const ReleaseDetailsScreen = ({ route, navigation }) => {
     setSections(sections);
     return sections;
   }
-  let [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold });
   useEffect(() => {
     async function prepare() {
       try {
@@ -106,10 +106,10 @@ const ReleaseDetailsScreen = ({ route, navigation }) => {
   const navigateToRelease = ({ id, name }) => {
     navigation.replace("ReleaseDetails", { id: id, title: name });
   };
-  /**
-  const navigateToArtist = (id, name, {coverArt}) => {
-    navigation.push('ArtistDetails', {id: id, title: name, coverArt})
-  }**/
+  
+  const navigateToArtist = (id, name) => {
+    navigation.push('ArtistDetails', {id: id.id, title: id.name})
+  }
   function changeRelease(releaseNumber) {
     setCurrentRelease(releaseNumber);
   }
@@ -188,6 +188,24 @@ const ReleaseDetailsScreen = ({ route, navigation }) => {
             })}
           </ScrollView>
         </View>
+        <View>
+          <ScrollView style={styles.artistsOnTracks} horizontal>
+            {release_group.artistsOnTracks.map((artist) => {
+              return (
+                <Artist
+                  key={artist.artist}
+                  artist={artist}
+                  onClick={() =>
+                    navigateToArtist({
+                      name: artist.name,
+                      id: artist.artist,
+                    })
+                  }
+                />
+              );
+            })}
+          </ScrollView>
+        </View>
       </View>
     </ScrollView>
   );
@@ -256,6 +274,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#040f16",
     flex: 1,
   },
+  artistsOnTracks: {
+    paddingLeft: 10,
+    backgroundColor: "#040f16",
+    flex: 1,
+  }
 });
 
 export default ReleaseDetailsScreen;

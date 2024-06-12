@@ -1,7 +1,7 @@
 import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import React from "react";
 
-const Artist = ({ release, onClick }) => {
+const Artist = ({ artist, onClick }) => {
   return (
     <Pressable
       style={({ pressed }) => [
@@ -11,15 +11,13 @@ const Artist = ({ release, onClick }) => {
         styles.wrapperCustom,
       ]}
       onPress={() =>
-        onClick(release.release_group_id, release.release_group_name, {
-          coverArt: release.cover_art,
-        })
+        onClick(artist.artist, artist.name)
       }
     >
       <View style={styles.container}>
-        <Image source={{ uri: release.cover_art }} style={styles.image} />
-        <Text style={styles.text}>{release.release_group_name}</Text>
-        <Text style={styles.artist}>{release.artist_name}</Text>
+        <Image source={{ uri: artist.cover_art }} style={styles.image} />
+        <Text style={styles.text}>{artist.name}</Text>
+        <Text style={styles.artist}>{artist.name}</Text>
       </View>
     </Pressable>
   );
